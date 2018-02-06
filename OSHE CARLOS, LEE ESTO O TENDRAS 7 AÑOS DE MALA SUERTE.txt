@@ -1,0 +1,5 @@
+Crea un nuevo Proyecto, con Windows Forms y la wea, el Forms que puse es el MainGame
+
+Cuando pases el codigo de las clases a tu proyecto, CREA UNA NUEVA CLASE Y COPIA EL CODIGO, si copias el archivo .h y .cpp directo al proyecto, EXPLOTA!!!!! ( Me ha pasado :'c )
+
+Te quiero vrah
