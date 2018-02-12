@@ -1,43 +1,49 @@
 #pragma once
 #include "Figura.h"
-#include "Tile.h"
 class Player :
 	public Figura
 {
-	int Lim;
-	double a, b;
 	double dx, dy;
 	double Vo;
 	double angulo;
+	bool EnAire = false;
+	bool Saltando = false;
+	bool Impulsando = false;
+	bool OnColision = false;
 	double t;
-	double TiempoReal = 0;
-	bool OnImpulse = false;
-	bool Salto = false;
-	bool Tiled = false;
+	double Rotation;
+	int Lim;
 public:
 	Player();
 	~Player();
 	Player(float px, float py, float pl);
-
-	bool JumpState();
-	bool ImpulseState();
-	bool Colision(Figura* a);
-	bool Dentro(Figura* a);
-
-	void MoverP(double tiempo);
-	void Mover();
-	void Mostrar(Graphics ^ G);
 	
-	void CheckColision(Figura*a, double *t);
+	void Salto(double tiempo);
 	void Impulso(double tiempo);
-	void SetDx(double pdx);
-	void SetDy(double pdy);
-	void Saltar(bool B);
-	void Tiling(Figura* a);
-	double GetTiempo();
+	void Mostrar(Graphics ^ G);
+
+	void CheckColision(Figura*a, double *t);
+	bool Colision(Figura* a);
+
 	int GetLim();
-	double GetTiempoReal();
-	void SetTiempo(double t);
-	void Impulsar(bool b);
+	double GetDx();
+	double GetVo();
+	double Getangulo();
+	bool GetSaltando();
+	bool GetImpulsando();
+	bool GetEnAire();
+	double Gett();
+	double GetRotation();
+
+	void Mover();
+	void SetDx(double Dx);
+	void SetDy(double Dy);
+	void SetVo(double Vo);
+	void Setangulo(double angulo);
+	void SetSaltando(bool Saltando);
+	void SetImpulsando(bool Impulsando);
+	void Sett(double t);
+	void SetRotation(double Rotation);
+	void SetOnAire(bool Aire);
 };
 

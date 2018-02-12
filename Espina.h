@@ -1,12 +1,12 @@
 #pragma once
 #include "Figura.h"
-class Trampolin :
+class Espina :
 	public Figura
 {
 public:
 	void Mostrar(Graphics^ G);
-	Trampolin();
-	Trampolin(float px, float py, float pl);
-	~Trampolin();
+	Espina();
+	Espina(float px, float py, float pl);
+	~Espina();
 };
 

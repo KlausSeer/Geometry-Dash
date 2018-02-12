@@ -20,6 +20,7 @@ Trampolin::Trampolin(float px, float py, float pl)
 	x = px;
 	y = py;
 	l = pl;
+
 }
 
 

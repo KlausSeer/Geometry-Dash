@@ -4,6 +4,7 @@ using namespace System::Drawing;
 class Figura
 {
 protected:
+	int lado;
 	short GravMod = 1;
 	short Tag;
 	float x, y, l;
@@ -19,6 +20,9 @@ public:
 	bool GetColide();
 	void Colide(bool B);
 	void SetTag(short T);
+	void Sety(float y);
+	void Setx(float x);
+	virtual void Mover();
 	Figura();
 	~Figura();
 };
