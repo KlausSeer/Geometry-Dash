@@ -22,14 +22,6 @@ namespace SegundaVersion {
 			//TODO: agregar código de constructor aquí
 			//
 			GM = new GameManager();
-			Tramp = new Tile(300, 450, 60);
-			Grav = new Gravedad(700, 420, 50, true);
-			Grav2 = new Portal(1800, 120, 50, true);
-			Grav3 = new Portal(2600, 420, 50, false);
-			GM->Agregar(Tramp);
-			GM->Agregar(Grav);
-			GM->Agregar(Grav2);
-			GM->Agregar(Grav3);
 			imgTrampolin = gcnew Bitmap("Trampolin.png");
 			imgNave = gcnew Bitmap("Nave.png");
 			imgPlayer = gcnew Bitmap("Jugador.png");
@@ -67,9 +59,6 @@ namespace SegundaVersion {
 		/// </summary>
 		Graphics^ g;
 		GameManager* GM;
-		Figura* Grav;
-		Figura* Grav2;
-		Figura* Grav3;
 		Bitmap^ imgNave;
 		Bitmap^ imgPlayer;
 		Bitmap^ imgEspina;

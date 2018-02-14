@@ -117,6 +117,55 @@ void GameManager::AumentarSalto()
 	N_Saltos++;
 }
 
+void GameManager::Inicializar()
+{
+	int _tag;
+	int _x;
+	int _y;
+	int _l;
+	bool Prim;
+	ifstream fs(file_name);
+	string cadena;
+	while (!fs.eof())
+	{
+		getline(fs, cadena);
+		if (cadena.length() > 0) {
+			Figura* Nueva;
+			_tag = (atoi(cadena.c_str()));
+			getline(fs, cadena);
+			_x = (atoi(cadena.c_str()));
+			getline(fs, cadena);
+			_y = (atoi(cadena.c_str()));
+			getline(fs, cadena);
+			_l = (atoi(cadena.c_str()));
+			if (_tag == 2 || _tag == 3 || _tag == 5 || _tag == 6)
+			{
+				getline(fs, cadena);
+				string Id = (cadena.c_str());
+				if (strcmp(&*Id.begin(), "Si"))
+					Prim = false;
+				else
+					Prim = true;
+			}
+			switch (_tag)
+			{
+			case 1: Nueva = new Espina(_x, _y, _l); break;
+			case 2:	Nueva = new Gravedad(_x, _y, _l,Prim); break;
+			case 3:	Nueva = new Gravedad(_x, _y, _l, Prim); break;
+			case 4:	Nueva = new Tile(_x, _y, _l); break;
+			case 5:	Nueva = new Portal(_x, _y, _l, Prim); break;
+			case 6:	Nueva = new Portal(_x, _y, _l, Prim); break;
+			case 7:	Nueva = new Trampolin(_x, _y, _l); break;
+			default:
+				break;
+			}
+
+			Vec.push_back(Nueva);
+		}
+	}
+	fs.close();
+}
+
 void GameManager::Transformar()
 {
 	if (Jugador->GetTransformado())
@@ -128,9 +177,11 @@ void GameManager::Transformar()
 
 GameManager::GameManager()
 {
+	file_name = "Editor.txt";
 	N_Saltos = 0;
 	TiempoReal = 0;
 	Jugador = new Player(90, 400, 30);
+	Inicializar();
 }
 
 

@@ -8,10 +8,13 @@
 #include "Portal.h"
 #include <vector>
 #include <iostream>
+#include <fstream>
+#include <string>
 
 using namespace std;
 class GameManager
 {
+	string file_name;
 	double TiempoReal;
 	Player* Jugador;
 	vector<Figura*> Vec;
@@ -38,6 +41,7 @@ public:
 	void Agregar(Figura*Nuevo);
 	void Update(Graphics^ G);
 	void AumentarSalto();
+	void Inicializar();
 	//void Reset();
 	//void CalcularPuntaje();
 	//void Ranking();
