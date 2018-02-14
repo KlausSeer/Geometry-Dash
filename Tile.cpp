@@ -2,7 +2,7 @@
 
 
 
-void Tile::Mostrar(Graphics ^ G)
+void Tile::Mostrar(Graphics ^ G, Bitmap^ img)
 {
 	array<Point>^ puntos = gcnew array<Point>(lado);
 	float x1, y1;
@@ -13,8 +13,7 @@ void Tile::Mostrar(Graphics ^ G)
 		y1 = y + l *System::Math::Sin(ang *System::Math::PI / 180);
 		puntos[i] = Point(x1, y1);
 	}
-	SolidBrush ^ B = gcnew SolidBrush(Color::PaleVioletRed);
-	G->FillPolygon(B, puntos);
+	G->DrawImage(img, x, y, l-5, l-5);
 }
 
 Tile::Tile()

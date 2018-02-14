@@ -20,6 +20,11 @@ double GameManager::GetTemp()
 	return TiempoReal;
 }
 
+int GameManager::GetN_Saltos()
+{
+	return N_Saltos;
+}
+
 void GameManager::Temp(double t)
 {
 	TiempoReal += t;
@@ -30,12 +35,27 @@ void GameManager::SetTemp(double t)
 	TiempoReal = t;
 }
 
-void GameManager::MostrarObjetos(Graphics ^ G)
+void GameManager::MostrarObjetos(Graphics ^ G, Bitmap^ imgNave, Bitmap^ imgJugador, Bitmap^ imgTile, Bitmap^ imgPortal1, Bitmap^ imgPortal2, Bitmap^imgEspina, Bitmap^ imgTrampolin)
 {
-	Jugador->Mostrar(G);
+	if(Jugador->GetTransformado())
+		Jugador->Mostrar(G, imgNave);
+	else
+		Jugador->Mostrar(G, imgJugador);
 	for (unsigned int i = 0; i < Vec.size(); i++)
 	{
-		Vec[i]->Mostrar(G);
+		switch (Vec[i]->GetTag())
+		{
+		case 1: Vec[i]->Mostrar(G, imgEspina); break;
+		case 2:	Vec[i]->Mostrar(G, imgPortal1); break;
+		case 3:	Vec[i]->Mostrar(G, imgPortal2); break;
+		case 4:	Vec[i]->Mostrar(G, imgTile); break;
+		case 5:	Vec[i]->Mostrar(G, imgPortal1); break;
+		case 6:	Vec[i]->Mostrar(G, imgPortal2); break;
+		case 7:	Vec[i]->Mostrar(G, imgTrampolin); break;
+		default:
+			break;
+		}
+		
 	}
 }
 
@@ -61,7 +81,6 @@ void GameManager::Update(Graphics ^ G)
 		else
 		{
 			Jugador->SetImpulsando(false);
-			Jugador->SetRotation(45);
 		}
 
 	}
@@ -73,11 +92,10 @@ void GameManager::Update(Graphics ^ G)
 		else
 		{
 			Jugador->SetSaltando(false);
-			Jugador->SetRotation(45);
 		}
 	}
 
-
+	
 	/*else if (Jugador->Getx() > 90)
 	Jugador->Setx(Jugador->Getx() - 5);
 	*/
@@ -85,16 +103,32 @@ void GameManager::Update(Graphics ^ G)
 	{
 		Jugador->SetDy(Jugador->GetLim());
 		Jugador->Mover();
-
 	}
-
 	
+	/*if (!Jugador->GetOnColision())
+		Jugador->SetTiled(false);
+	*/
 	MoverObjetos();
 	TiempoReal += 0.35;
 }
 
+void GameManager::AumentarSalto()
+{
+	N_Saltos++;
+}
+
+void GameManager::Transformar()
+{
+	if (Jugador->GetTransformado())
+		Jugador = new Nave(Jugador->Getx(), Jugador->Gety(), Jugador->Getl());
+	else 
+		Jugador = new Player(Jugador->Getx(), Jugador->Gety(), Jugador->Getl());
+	Jugador->SetEnPortal(false);
+}
+
 GameManager::GameManager()
 {
+	N_Saltos = 0;
 	TiempoReal = 0;
 	Jugador = new Player(90, 400, 30);
 }

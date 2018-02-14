@@ -2,12 +2,9 @@
 
 
 
-void Trampolin::Mostrar(Graphics ^ G)
+void Trampolin::Mostrar(Graphics ^ G, Bitmap^ img)
 {
-	Pen^ P = gcnew Pen(Color::Goldenrod);
-	G->DrawEllipse(P, x, y, l, l);
-	Brush^ B = gcnew SolidBrush(Color::Goldenrod);
-	G->FillEllipse(B, x, y, l, l);
+	G->DrawImage(img, x, y, l, l);
 }
 
 Trampolin::Trampolin()
@@ -16,7 +13,7 @@ Trampolin::Trampolin()
 
 Trampolin::Trampolin(float px, float py, float pl)
 {
-	Tag = 3;
+	Tag = 7;
 	x = px;
 	y = py;
 	l = pl;

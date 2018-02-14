@@ -23,6 +23,11 @@ double Player::GetDx()
 	return dx;
 }
 
+double Player::GetDy()
+{
+	return dy;
+}
+
 double Player::GetVo()
 {
 	return Vo;
@@ -31,6 +36,11 @@ double Player::GetVo()
 double Player::Getangulo()
 {
 	return angulo;
+}
+
+bool Player::GetTransformado()
+{
+	return Transformado;
 }
 
 bool Player::GetSaltando()
@@ -58,43 +68,77 @@ double Player::GetRotation()
 	return Rotation;
 }
 
+bool Player::GetEnPortal()
+{
+	return EnPortal;
+}
+
+bool Player::GetTiled()
+{
+	return Tiled;
+}
+
+bool Player::GetOnColision()
+{
+	return OnColision;
+}
+
 void Player::Mover()
 
 {
-	Lim = 300 + (GravMod * 200);
-	if (GravMod == 1)
+	if (Tiled)
 	{
-		if (y <= Lim)
+		EnAire = false;
+		if (GravMod == 1)
 		{
-			EnAire = true;
-			y += g*1.3;
-			Rotation += 5;
-			if (Rotation > 360)
-				Rotation = 0;
-		}
-		if (y >= Lim)
-		{
-			EnAire = false;
-			Rotation = 45;
+			Rotation = 135;
 		}
 
+
+		if (GravMod == -1)
+		{
+			Rotation = 315;
+		}
 	}
-
-	else if (GravMod == -1)
+	
+	if (!Tiled)
 	{
-		if (y >= Lim)
+
+		Lim = 300 + (GravMod * 200);
+		if (GravMod == 1)
 		{
-			EnAire = true;
-			y -= g*1.3;
-			Rotation += 5;
-			if (Rotation > 360)
-				Rotation = 0;
+			if (y <= Lim)
+			{
+				EnAire = true;
+				y += g*1.3;
+				Rotation += 10;
+				if (Rotation > 360)
+					Rotation = 0;
+			}
+			if (y >= Lim)
+			{
+				EnAire = false;
+				Rotation = 135;
+			}
+
 		}
 
-		if (y <= Lim)
+		else if (GravMod == -1)
 		{
-			EnAire = false;
-			Rotation = 45;
+			if (y >= Lim)
+			{
+				EnAire = true;
+				y -= g*1.3;
+				Rotation += 10;
+				if (Rotation > 360)
+					Rotation = 0;
+			}
+
+			if (y <= Lim)
+			{
+				EnAire = false;
+				Rotation = 315;
+			}
 		}
 	}
 }
@@ -144,6 +188,21 @@ void Player::SetOnAire(bool Aire)
 	EnAire = Aire;
 }
 
+void Player::Tranformar()
+{
+		Transformado = true;
+}
+
+void Player::SetEnPortal(bool Portal)
+{
+	EnPortal = Portal;
+}
+
+void Player::SetTiled(bool Tile)
+{
+	Tiled = Tile;
+}
+
 //Movimiento
 
 void Player::CheckColision(Figura * a, double *T)
@@ -151,6 +210,7 @@ void Player::CheckColision(Figura * a, double *T)
 	if (Colision(a))
 	{
 		OnColision = true;
+		if(!Tiled)
 		*T = 0;
 		Saltando = false;
 		Impulsando = false;
@@ -158,15 +218,21 @@ void Player::CheckColision(Figura * a, double *T)
 		dy = y;
 		switch (a->GetTag())
 		{
-		case 1: Gravity();  break;
+		case 1:
+			break;
 		case 2: Gravity(); break;
-		case 3: SetImpulsando(true); break;
-			//case 4: Tiling(a); break;
+		case 3: Gravity(); break;
+		case 4: Tiled = true;
+			OnColision = false;  break;
+		case 5: EnPortal = true; Tranformar(); break;
+		case 6: EnPortal = true; Tranformar(); break;
+		case 7: SetImpulsando(true); break;		
 		default: break;
 		}
 	}
 	else
 	{
+		Lim = 300 + (GravMod * 200);
 		OnColision = false;
 	}
 		
@@ -179,31 +245,39 @@ void Player::Impulso(double tiempo)
 		if (x < 100)
 		x = dx + (1.5*Vo*cos(angulo)*tiempo);
 		y = dy - GravMod*(2*Vo*sin(angulo)*tiempo - 0.5 * g * tiempo * tiempo);
-		Rotation += 5;
+		Rotation += 10;
 		if (Rotation > 360)
 			Rotation = 0;
 		EnAire = true;
 	}
 }
 
-void Player::Mostrar(Graphics ^ G)
+void Player::Mostrar(Graphics ^ G, Bitmap^ img)
 {
-	array<Point>^ puntos = gcnew array<Point>(lado);
+	array<Point>^ puntos = gcnew array<Point>(lado-1);
 	float x1, y1;
-	for (int i = 0; i < lado; i++)
-	{
-		float ang = Rotation + (360 / lado)*i;
-		x1 = x + l *System::Math::Cos(ang *System::Math::PI / 180);
-		y1 = y + l *System::Math::Sin(ang *System::Math::PI / 180);
-		puntos[i] = Point(x1, y1);
-	}
-	SolidBrush ^ B = gcnew SolidBrush(Color::LawnGreen);
-	G->FillPolygon(B, puntos);
+	float ang = Rotation + 90;
+	x1 = x + l *System::Math::Cos(ang *System::Math::PI / 180);
+	y1 = y + l *System::Math::Sin(ang *System::Math::PI / 180);
+	puntos[0] = Point(x1, y1);
+
+	ang = Rotation + 180;
+	x1 = x + l *System::Math::Cos(ang *System::Math::PI / 180);
+	y1 = y + l *System::Math::Sin(ang *System::Math::PI / 180);
+	puntos[1] = Point(x1, y1);
+
+	ang = Rotation;
+	x1 = x + l *System::Math::Cos(ang *System::Math::PI / 180);
+	y1 = y + l *System::Math::Sin(ang *System::Math::PI / 180);
+	puntos[2] = Point(x1, y1);
+
+	G->DrawImage(img, puntos);
 }
 
 
 void Player::Salto(double tiempo)
 {
+	
 	if (!OnColision)
 	{
 		if (!Impulsando)
@@ -211,7 +285,7 @@ void Player::Salto(double tiempo)
 			if (x < 100)
 			x = dx + (Vo*cos(angulo)*tiempo);
 			y = dy - GravMod*(1.7*Vo*sin(angulo)*tiempo - 0.5 * g * tiempo * tiempo);
-			Rotation += 5;
+			Rotation += 10;
 			if (Rotation > 360)
 				Rotation = 0;
 			EnAire = true;
@@ -221,10 +295,10 @@ void Player::Salto(double tiempo)
 
 Player::Player(float px, float py, float pl)
 {
+	Transformado = false;
 	lado = 4;
-	Rotation = 45;
+	Rotation = 0;
 	Tag = 0;
-	l = 4;
 	dx = x = px;
 	dy = y = py;
 	l = pl;
@@ -238,17 +312,58 @@ bool Player::Colision(Figura* a)
 {
 	if (a->GetColide())
 	{
-		float x1 = x + l / 2;
-		float y1 = y + l / 2;
-		float x2 = a->Getx() + a->Getl() / 2;
-		float y2 = a->Gety() + a->Getl() / 2;
-
-		float d = sqrt((pow((x2 - x1), 2) + (pow((y2 - y1), 2))));
-		if (d < ((l + a->Getl())/2))
+		if (a->GetTag() == 4)
 		{
-			a->Colide(false);
-			return true;
+			if (y + l >= a->Gety() && y <= a->Gety() + a->Getl())
+			{
+
+				if (a->Getx() <= (x + l) && (a->Getx() + a->Getl()) >= x + l)
+				{
+					
+					if ((y + l) - 1 < a->Gety())
+					{
+						a->Colide(true);
+						Lim = a->Gety();
+						return true;
+					}
+					else
+					{
+						a->Colide(true);
+						a->SetTag(1);
+					}
+
+				}
+				else
+				{
+					Tiled = false;
+					return false;
+				}
+			}
+
+		}
+
+		else
+		{
+
+			float x1 = x + l / 2;
+			float y1 = y + l / 2;
+			float x2 = a->Getx() + a->Getl() / 2;
+			float y2 = a->Gety() + a->Getl() / 2;
+
+			float d = sqrt((pow((x2 - x1), 2) + (pow((y2 - y1), 2))));
+			if (d < ((l + a->Getl()) / 2))
+			{
+				a->Colide(false);
+				return true;
+			}
 		}
 	}
+}
 
+void Player::Tiling(Figura * a)
+{
+	if (OnColision)
+		Tiled = true;
+	else
+		Tiled = false;
 }

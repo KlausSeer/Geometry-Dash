@@ -2,19 +2,22 @@
 
 
 
-void Gravedad::Mostrar(Graphics ^ G)
+void Gravedad::Mostrar(Graphics ^ G, Bitmap^ img)
 {
-	Pen^ P = gcnew Pen(Color::CornflowerBlue, 3);
-	G->DrawEllipse(P, x, y, l, l + 35);
+	G->DrawImage(img, x, y, l, l + 35);
 }
 
 Gravedad::Gravedad()
 {
 }
 
-Gravedad::Gravedad(float px, float py, float pl)
+Gravedad::Gravedad(float px, float py, float pl, bool b)
 {
-	Tag = 2;
+	Primero = b;
+	if (Primero)
+		Tag = 2;
+	else
+		Tag = 3;
 	x = px;
 	y = py;
 	l = pl;

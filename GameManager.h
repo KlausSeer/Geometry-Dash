@@ -4,6 +4,8 @@
 #include "Gravedad.h"
 #include "Trampolin.h"
 #include "Tile.h"
+#include "Nave.h"
+#include "Portal.h"
 #include <vector>
 #include <iostream>
 
@@ -13,17 +15,33 @@ class GameManager
 	double TiempoReal;
 	Player* Jugador;
 	vector<Figura*> Vec;
+	float Progreso;
+	int N_Saltos;
+	int N_Intentos;
+	bool Complete;
 public:
+	//Constructores
+	GameManager();
+	~GameManager();
+
+	//Metodos de Acceso
 	Player* GetPlayer();
-	void CheckColisions();
 	double GetTemp();
+	int GetN_Saltos();
 	void Temp(double t);
 	void SetTemp(double t);
-	void MostrarObjetos(Graphics^G);
+
+	//Metodos Objetos
+	void CheckColisions();
+	void MostrarObjetos(Graphics^ G, Bitmap^ imgNave, Bitmap^ imgJugador, Bitmap^ imgTile, Bitmap^ imgPortal1, Bitmap^ imgPortal2, Bitmap^imgEspina, Bitmap^ imgTrampolin);
 	void MoverObjetos();
 	void Agregar(Figura*Nuevo);
 	void Update(Graphics^ G);
-	GameManager();
-	~GameManager();
+	void AumentarSalto();
+	//void Reset();
+	//void CalcularPuntaje();
+	//void Ranking();
+
+	void Transformar();
 };
 

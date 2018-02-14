@@ -4,7 +4,7 @@ class Tile :
 	public Figura
 {
 public:
-	void Mostrar(Graphics^ G);
+	void Mostrar(Graphics^ G, Bitmap^ img);
 	Tile();
 	Tile(float px, float py, float pl);
 	~Tile();

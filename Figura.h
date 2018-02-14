@@ -12,7 +12,7 @@ protected:
 	bool Colible = true;
 public:
 	void Gravity();
-	virtual void Mostrar(Graphics ^ G) = 0;
+	virtual void Mostrar(Graphics ^ G, Bitmap^ img) = 0;
 	float Getx();
 	float Gety();
 	float Getl();
