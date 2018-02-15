@@ -2,7 +2,7 @@
 
 
 
-void Gravedad::Mostrar(Graphics ^ G, Bitmap^ img)
+void Gravedad::Mostrar(Graphics ^ G, Bitmap ^ img)
 {
 	G->DrawImage(img, x, y, l, l + 35);
 }
@@ -21,7 +21,6 @@ Gravedad::Gravedad(float px, float py, float pl, bool b)
 	x = px;
 	y = py;
 	l = pl;
-
 }
 
 

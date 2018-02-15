@@ -1,19 +1,21 @@
 #pragma once
+#include "Participante.h"
 #include "Espina.h"
-#include "Player.h"
-#include "Gravedad.h"
 #include "Trampolin.h"
+#include "Gravedad.h"
+#include "Portal.h"
 #include "Tile.h"
 #include "Nave.h"
-#include "Portal.h"
+#include "Cuadrado.h"
 #include <vector>
-#include <iostream>
-#include <fstream>
 #include <string>
+#include <fstream>
 
 using namespace std;
+
 class GameManager
 {
+	string file_nameH;
 	string file_name;
 	double TiempoReal;
 	Player* Jugador;
@@ -22,10 +24,12 @@ class GameManager
 	int N_Saltos;
 	int N_Intentos;
 	bool Complete;
+	vector<Participante*> Participantes;
 public:
-	//Constructores
 	GameManager();
 	~GameManager();
+
+
 
 	//Metodos de Acceso
 	Player* GetPlayer();
@@ -34,18 +38,14 @@ public:
 	void Temp(double t);
 	void SetTemp(double t);
 
-	//Metodos Objetos
+	void LeerHighscores();
+	void RegistrarPuntuacion();
+	void AumentarSalto();
+	void Inicializar();
 	void CheckColisions();
 	void MostrarObjetos(Graphics^ G, Bitmap^ imgNave, Bitmap^ imgJugador, Bitmap^ imgTile, Bitmap^ imgPortal1, Bitmap^ imgPortal2, Bitmap^imgEspina, Bitmap^ imgTrampolin);
 	void MoverObjetos();
-	void Agregar(Figura*Nuevo);
 	void Update(Graphics^ G);
-	void AumentarSalto();
-	void Inicializar();
-	//void Reset();
-	//void CalcularPuntaje();
-	//void Ranking();
-
 	void Transformar();
 };
 

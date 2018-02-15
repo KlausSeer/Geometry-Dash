@@ -3,7 +3,6 @@
 class Espina :
 	public Figura
 {
-	//Para animacion
 	int i = 0;
 public:
 	void Mostrar(Graphics^ G, Bitmap^ img);

@@ -3,17 +3,18 @@
 class Nave :
 	public Player
 {
-	//Para animacion
+	//Para la animacion
 	int i = 0;
 	int j = 0;
 public:
+	void Transformar();
 	Nave();
 	Nave(float px, float py, float pl);
 	~Nave();
 
-	void Tranformar();
 	void Mover();
 	void Salto(double tiempo);
 	void Mostrar(Graphics^ G, Bitmap^ img);
+	void CheckColision(Figura*a, double *T);
 };
 

@@ -2,7 +2,7 @@
 
 
 
-void Trampolin::Mostrar(Graphics ^ G, Bitmap^ img)
+void Trampolin::Mostrar(Graphics ^ G, Bitmap ^ img)
 {
 	G->DrawImage(img, x, y, l, l);
 }
@@ -17,7 +17,6 @@ Trampolin::Trampolin(float px, float py, float pl)
 	x = px;
 	y = py;
 	l = pl;
-
 }
 
 

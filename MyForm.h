@@ -1,6 +1,6 @@
 #pragma once
 #include "GameManager.h"
-namespace SegundaVersion {
+namespace GeomtryDash {
 
 	using namespace System;
 	using namespace System::ComponentModel;
@@ -31,7 +31,10 @@ namespace SegundaVersion {
 			imgPortal2 = gcnew Bitmap("Portal2.png");
 			imgFondo = gcnew Bitmap("background.png");
 			g = this->CreateGraphics();
-
+			height = g->VisibleClipBounds.Height;
+			width = g->VisibleClipBounds.Width;
+			BufferedSpace = BufferedGraphicsManager::Current;
+			BG = BufferedSpace->Allocate(g, ClientRectangle);
 		}
 
 	protected:
@@ -45,10 +48,22 @@ namespace SegundaVersion {
 				delete components;
 				delete g;
 				delete GM;
+				delete imgNave;
+				delete imgPlayer;
+				delete imgEspina;
+				delete imgTile;
+				delete imgPortal1;
+				delete imgPortal2;
+				delete imgTrampolin;
+				delete imgFondo;
+				delete BufferedSpace;
+				delete BG;
 			}
 		}
 	private: System::Windows::Forms::Timer^  DeltaTime;
+	private: System::Windows::Forms::Timer^  PhysicsTime;
 	protected:
+
 
 	protected:
 	private: System::ComponentModel::IContainer^  components;
@@ -69,12 +84,13 @@ namespace SegundaVersion {
 		Bitmap^ imgFondo;
 		int _x = 0;
 		int _y = 0;
-	private: System::Windows::Forms::Timer^  PhysicsTime;
+		int height;
+		int width;
+		BufferedGraphicsContext  ^ BufferedSpace;
 	private: System::Windows::Forms::Label^  label1;
 	private: System::Windows::Forms::Label^  label2;
 	private: System::Windows::Forms::Label^  label3;
-	private: System::Windows::Forms::Label^  label4;
-			 Figura* Tramp;
+			 BufferedGraphics ^ BG;
 #pragma region Windows Form Designer generated code
 		/// <summary>
 		/// Método necesario para admitir el Diseñador. No se puede modificar
@@ -88,7 +104,6 @@ namespace SegundaVersion {
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->label3 = (gcnew System::Windows::Forms::Label());
-			this->label4 = (gcnew System::Windows::Forms::Label());
 			this->SuspendLayout();
 			// 
 			// DeltaTime
@@ -106,53 +121,41 @@ namespace SegundaVersion {
 			// label1
 			// 
 			this->label1->AutoSize = true;
-			this->label1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->label1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->label1->Location = System::Drawing::Point(13, 13);
+			this->label1->Location = System::Drawing::Point(12, 9);
 			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(60, 24);
+			this->label1->Size = System::Drawing::Size(51, 16);
 			this->label1->TabIndex = 0;
 			this->label1->Text = L"label1";
 			// 
 			// label2
 			// 
 			this->label2->AutoSize = true;
-			this->label2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->label2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->label2->Location = System::Drawing::Point(12, 46);
+			this->label2->Location = System::Drawing::Point(12, 35);
 			this->label2->Name = L"label2";
-			this->label2->Size = System::Drawing::Size(60, 24);
+			this->label2->Size = System::Drawing::Size(51, 16);
 			this->label2->TabIndex = 1;
 			this->label2->Text = L"label2";
 			// 
 			// label3
 			// 
 			this->label3->AutoSize = true;
-			this->label3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->label3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->label3->Location = System::Drawing::Point(12, 80);
+			this->label3->Location = System::Drawing::Point(12, 63);
 			this->label3->Name = L"label3";
-			this->label3->Size = System::Drawing::Size(60, 24);
+			this->label3->Size = System::Drawing::Size(51, 16);
 			this->label3->TabIndex = 2;
 			this->label3->Text = L"label3";
-			// 
-			// label4
-			// 
-			this->label4->AutoSize = true;
-			this->label4->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(0)));
-			this->label4->Location = System::Drawing::Point(12, 114);
-			this->label4->Name = L"label4";
-			this->label4->Size = System::Drawing::Size(60, 24);
-			this->label4->TabIndex = 3;
-			this->label4->Text = L"label4";
 			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(284, 262);
-			this->Controls->Add(this->label4);
 			this->Controls->Add(this->label3);
 			this->Controls->Add(this->label2);
 			this->Controls->Add(this->label1);
@@ -165,42 +168,23 @@ namespace SegundaVersion {
 
 		}
 #pragma endregion
+	private: System::Void PhysicsTime_Tick(System::Object^  sender, System::EventArgs^  e) {
+		GM->CheckColisions();
+		if (GM->GetPlayer()->GetEnPortal())
+			GM->Transformar();
+	}
 	private: System::Void DeltaTime_Tick(System::Object^  sender, System::EventArgs^  e) {
-		BufferedGraphicsContext  ^ BufferedSpace = BufferedGraphicsManager::Current;
-		BufferedGraphics ^ BG = BufferedSpace->Allocate(g, ClientRectangle);
-
-		int height = g->VisibleClipBounds.Height;
-		int width = g->VisibleClipBounds.Width;
-
-		Rectangle Cut(0, 0, width, height);
-		Brush^ B = gcnew TextureBrush(imgTile);
+		BG->Graphics->Clear(Color::Black);
+		
 		GM->Update(BG->Graphics);
 
-		if (_x > imgFondo->Width / 2)
-		{
-			Rectangle Nuevo(width - _x, _y, width, height);
-			Cut = Nuevo;
-			//BG->Graphics->DrawImage(imgFondo, Cut, _x, _y, imgFondo->Width / 2, imgFondo->Height, GraphicsUnit::Pixel);
-			_x = 0;
-		}
-
-		BG->Graphics->DrawImage(imgFondo, Cut, _x, _y, imgFondo->Width / 2, imgFondo->Height, GraphicsUnit::Pixel);
-		//BG->Graphics->FillRectangle(B, _x, 530, 1900, 20);
-		//BG->Graphics->FillRectangle(B, _x, 75, 1900, 20);
-		GM->MostrarObjetos(BG->Graphics, imgNave, imgPlayer,  imgTile, imgPortal1, imgPortal2, imgEspina, imgTrampolin);
+		GM->MostrarObjetos(BG->Graphics, imgNave, imgPlayer, imgTile, imgPortal1, imgPortal2, imgEspina, imgTrampolin);
 		BG->Render(g);
-		
 
-		_x += 5;
+		label1->Text = "EnAire: " + GM->GetPlayer()->GetEnAire().ToString();
+		label2->Text = "Saltando: " + GM->GetPlayer()->GetSaltando().ToString();
+		label3->Text = "Tiled: " + GM->GetPlayer()->GetTiled().ToString() + " Y: " + GM->GetPlayer()->Gety().ToString();
 
-
-		//GM->Temp(0.35);
-		delete BG;
-		delete BufferedSpace;
-		label1->Text = "X: " + GM->GetPlayer()->Getx().ToString() + " Y: " + GM->GetPlayer()->GetDy().ToString() + " Saltos: " + GM->GetN_Saltos() + " Limite: " + GM->GetPlayer()->GetLim();
-			label2->Text = " Aire: " + GM->GetPlayer()->GetEnAire().ToString();
-			label3->Text = " Tile: " + GM->GetPlayer()->GetTiled().ToString();
-			label4->Text = " Colision: " + GM->GetPlayer()->GetOnColision().ToString();
 	}
 	private: System::Void MyForm_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
 		if (e->KeyCode == Keys::Space && !GM->GetPlayer()->GetSaltando())
@@ -214,17 +198,7 @@ namespace SegundaVersion {
 
 			}
 		}
-		if (e->KeyCode == Keys::Q)
-		{
-			GM->GetPlayer()->SetEnPortal(true);
-			GM->GetPlayer()->Tranformar();
-		}
-			
-	}
-	private: System::Void PhysicsTime_Tick(System::Object^  sender, System::EventArgs^  e) {
-		GM->CheckColisions();
-		if(GM->GetPlayer()->GetEnPortal())
-		GM->Transformar();
+
 	}
 };
 }

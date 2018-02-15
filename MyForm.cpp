@@ -5,7 +5,7 @@ using namespace System::Windows::Forms;
 
 void main()
 {
-	Application::SetCompatibleTextRenderingDefault(false);
 	Application::EnableVisualStyles();
-	Application::Run(gcnew SegundaVersion::MyForm);
+	Application::SetCompatibleTextRenderingDefault(false);
+	Application::Run(gcnew GeomtryDash::MyForm);
 }

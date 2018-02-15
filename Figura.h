@@ -26,4 +26,3 @@ public:
 	Figura();
 	~Figura();
 };
-

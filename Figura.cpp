@@ -1,7 +1,6 @@
 #include "Figura.h"
 
 
-
 void Figura::Gravity()
 {
 	GravMod *= -1;
@@ -54,7 +53,7 @@ void Figura::Setx(float x)
 
 void Figura::Mover()
 {
-	x-= 3;
+	x -= 4;
 }
 
 Figura::Figura()

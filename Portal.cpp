@@ -2,7 +2,7 @@
 
 
 
-void Portal::Mostrar(Graphics ^ G, Bitmap^ img)
+void Portal::Mostrar(Graphics ^ G, Bitmap ^ img)
 {
 	G->DrawImage(img, x, y, l, l + 35);
 }
