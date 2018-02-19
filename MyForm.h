@@ -1,5 +1,7 @@
 #pragma once
 #include "GameManager.h"
+#include "GameOver.h"
+
 namespace GeomtryDash {
 
 	using namespace System;
@@ -8,6 +10,7 @@ namespace GeomtryDash {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+	using namespace System::Media;
 
 	/// <summary>
 	/// Resumen de MyForm
@@ -15,21 +18,28 @@ namespace GeomtryDash {
 	public ref class MyForm : public System::Windows::Forms::Form
 	{
 	public:
-		MyForm(void)
+		MyForm(int N, String^ Nom)
 		{
 			InitializeComponent();
 			//
 			//TODO: agregar código de constructor aquí
 			//
+			Nombre = gcnew String(Nom);
+			Op = N;
 			GM = new GameManager();
 			imgTrampolin = gcnew Bitmap("Trampolin.png");
 			imgNave = gcnew Bitmap("Nave.png");
-			imgPlayer = gcnew Bitmap("Jugador.png");
+			if(Op == 1)
+				imgPlayer = gcnew Bitmap("Jugador1.png");
+			else if (Op == 2)
+				imgPlayer = gcnew Bitmap("Jugador2.png");
+			else if (Op == 3)
+				imgPlayer = gcnew Bitmap("Jugador3.png");
 			imgEspina = gcnew Bitmap("Fuego.png");
 			imgTile = gcnew Bitmap("Tile.png");
 			imgPortal1 = gcnew Bitmap("Portal.png");
 			imgPortal2 = gcnew Bitmap("Portal2.png");
-			imgFondo = gcnew Bitmap("background.png");
+			imgFondo = gcnew Bitmap("background.jpg");
 			g = this->CreateGraphics();
 			height = g->VisibleClipBounds.Height;
 			width = g->VisibleClipBounds.Width;
@@ -46,8 +56,7 @@ namespace GeomtryDash {
 			if (components)
 			{
 				delete components;
-				delete g;
-				delete GM;
+				delete Nombre;
 				delete imgNave;
 				delete imgPlayer;
 				delete imgEspina;
@@ -56,8 +65,10 @@ namespace GeomtryDash {
 				delete imgPortal2;
 				delete imgTrampolin;
 				delete imgFondo;
-				delete BufferedSpace;
 				delete BG;
+				delete BufferedSpace;
+				delete GM;
+				delete g;
 			}
 		}
 	private: System::Windows::Forms::Timer^  DeltaTime;
@@ -67,11 +78,12 @@ namespace GeomtryDash {
 
 	protected:
 	private: System::ComponentModel::IContainer^  components;
-
+			 
 	private:
 		/// <summary>
 		/// Variable del diseñador necesaria.
 		/// </summary>
+		String^ Nombre;
 		Graphics^ g;
 		GameManager* GM;
 		Bitmap^ imgNave;
@@ -84,8 +96,11 @@ namespace GeomtryDash {
 		Bitmap^ imgFondo;
 		int _x = 0;
 		int _y = 0;
+		int __x = 0;
 		int height;
 		int width;
+		int Op;
+		int Intentos = 0;
 		BufferedGraphicsContext  ^ BufferedSpace;
 	private: System::Windows::Forms::Label^  label1;
 	private: System::Windows::Forms::Label^  label2;
@@ -109,13 +124,13 @@ namespace GeomtryDash {
 			// DeltaTime
 			// 
 			this->DeltaTime->Enabled = true;
-			this->DeltaTime->Interval = 34;
+			this->DeltaTime->Interval = 15;
 			this->DeltaTime->Tick += gcnew System::EventHandler(this, &MyForm::DeltaTime_Tick);
 			// 
 			// PhysicsTime
 			// 
 			this->PhysicsTime->Enabled = true;
-			this->PhysicsTime->Interval = 17;
+			this->PhysicsTime->Interval = 15;
 			this->PhysicsTime->Tick += gcnew System::EventHandler(this, &MyForm::PhysicsTime_Tick);
 			// 
 			// label1
@@ -168,23 +183,70 @@ namespace GeomtryDash {
 
 		}
 #pragma endregion
+
 	private: System::Void PhysicsTime_Tick(System::Object^  sender, System::EventArgs^  e) {
 		GM->CheckColisions();
+		if (!GM->GetPlayer()->GetVivo())
+		{
+			DeltaTime->Stop();
+			PhysicsTime->Stop();
+
+			GameOver^ Go = gcnew GameOver(Nombre, GM);
+			Go->ShowDialog();
+
+			g->Clear(Color::Black);
+			_x = __x = 0;
+
+			GM->~GameManager();
+			GM = new GameManager();
+			GM->SetIntentos(++Intentos);
+
+			PhysicsTime->Start();
+			DeltaTime->Start();
+		}
 		if (GM->GetPlayer()->GetEnPortal())
 			GM->Transformar();
 	}
 	private: System::Void DeltaTime_Tick(System::Object^  sender, System::EventArgs^  e) {
+		Rectangle Pantalla(_x, 0, width, height);
+		Rectangle Nuevo(0, 0, width, height);
+
 		BG->Graphics->Clear(Color::Black);
 		
+		BG->Graphics->DrawImage(imgFondo, 0, 0, Pantalla, GraphicsUnit::Pixel);
+
 		GM->Update(BG->Graphics);
 
+		_x += 14;
+
+		if (_x + width > imgFondo->Width)
+		{
+			BG->Graphics->DrawImage(imgFondo, width - __x, 0, Nuevo, GraphicsUnit::Pixel);
+			__x += 14;
+
+			if (__x  > 1300)
+			{
+				_x = 0;
+				__x = 0;
+			}
+				
+		}
+
 		GM->MostrarObjetos(BG->Graphics, imgNave, imgPlayer, imgTile, imgPortal1, imgPortal2, imgEspina, imgTrampolin);
+
+		//label1->Text = "Width: " + width.ToString();
+		//label2->Text = "_x: " + _x.ToString();
+		//label3->Text = "__x: " + __x.ToString() + " img: " + imgFondo->Width.ToString();
+		//
 		BG->Render(g);
-
-		label1->Text = "EnAire: " + GM->GetPlayer()->GetEnAire().ToString();
+		/*label1->Text = "EnAire: " + GM->GetPlayer()->GetEnAire().ToString();
 		label2->Text = "Saltando: " + GM->GetPlayer()->GetSaltando().ToString();
-		label3->Text = "Tiled: " + GM->GetPlayer()->GetTiled().ToString() + " Y: " + GM->GetPlayer()->Gety().ToString();
+		label3->Text = "Tiled: " + GM->GetPlayer()->GetTiled().ToString() + " Y: " + GM->GetPlayer()->Gety().ToString();*/
 
+		//label1->Text = "Saltos: " + GM->GetN_Saltos();
+		//label2->Text = "Intentos: " + GM->GetN_Intentos();
+		//label3->Text = "Porcentaje: " + GM->GetN_Progreso();
+		
 	}
 	private: System::Void MyForm_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
 		if (e->KeyCode == Keys::Space && !GM->GetPlayer()->GetSaltando())
@@ -198,7 +260,10 @@ namespace GeomtryDash {
 
 			}
 		}
-
+		if (e->KeyCode == Keys::E)
+			this->Close();
 	}
 };
+
+
 }

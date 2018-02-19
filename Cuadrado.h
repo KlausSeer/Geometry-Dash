@@ -3,7 +3,7 @@
 class Cuadrado :
 	public Player
 {
-	bool Tiled = false;
+	
 	double Vo;
 	double angulo;
 public:
@@ -14,12 +14,10 @@ public:
 	//Metodos Get
 	double GetVo();
 	double Getangulo();
-	bool GetTiled();
 
 	//Metodos Set
 	void SetVo(double Vo);
 	void Setangulo(double angulo);
-	void SetTiled(bool Tile);
 
 	void Mover();
 	void Transformar();

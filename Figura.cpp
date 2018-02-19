@@ -53,7 +53,7 @@ void Figura::Setx(float x)
 
 void Figura::Mover()
 {
-	x -= 4;
+	x -= 3;
 }
 
 Figura::Figura()

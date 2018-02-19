@@ -88,10 +88,20 @@ void Player::SetEnPortal(bool Portal)
 	EnPortal = Portal;
 }
 
+void Player::SetTiled(bool Tile)
+{
+	this->Tiled = Tile;
+}
+
 
 bool Player::GetTiled()
 {
-	return true;
+	return Tiled;
+}
+
+bool Player::GetVivo()
+{
+	return Vivo;
 }
 
 void Player::Impulso(double tiempo)
@@ -102,6 +112,42 @@ bool Player::Colision(Figura * a)
 {
 	if (a->GetColide())
 	{
+		if (a->GetTag() == 4)
+		{
+			if (a->Getx() <= (x + l) && (a->Getx() + a->Getl()) >= x)
+
+			{
+
+				if (y + l >= a->Gety() && y <= a->Gety() + a->Getl())
+				{
+
+					if (y < a->Gety())
+					{
+						a->Colide(true);
+						Lim = a->Gety();
+						return true;
+					}
+					else
+					{
+						a->Colide(true);
+						a->SetTag(1);
+					}
+
+				}
+				else
+				{
+					Tiled = false;
+					return false;
+				}
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		else
+		{
 			float x1 = x + l / 2;
 			float y1 = y + l / 2;
 			float x2 = a->Getx() + a->Getl() / 2;
@@ -115,6 +161,7 @@ bool Player::Colision(Figura * a)
 			}
 		}
 	}
+}
 
 Player::Player()
 {

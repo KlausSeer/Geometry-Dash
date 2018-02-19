@@ -8,12 +8,14 @@ protected:
 	double t;
 	int Rotation;
 	int Lim;
+	bool Tiled = false;
 	bool Impulsando = false;
 	bool Saltando = false;
 	bool EnAire = false;
 	bool EnPortal = false;
 	bool OnColision = false;
 	bool Transformado;
+	bool Vivo = true;
 public:
 	
 	//Metodos Get
@@ -27,6 +29,8 @@ public:
 	double GetRotation();
 	bool GetEnPortal();
 	bool GetOnColision();
+	bool GetTiled();
+	bool GetVivo();
 
 	//Metodos Set
 	void SetDy(double Dy);
@@ -36,8 +40,8 @@ public:
 	void SetRotation(double Rotation);
 	void SetOnAire(bool Aire);
 	void SetEnPortal(bool Portal);
+	void SetTiled(bool Tile);
 
-	virtual bool GetTiled();
 	virtual void Impulso(double tiempo);
 	virtual bool Colision(Figura* a);
 	virtual void Transformar() = 0;

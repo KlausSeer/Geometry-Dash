@@ -12,11 +12,6 @@ double Cuadrado::Getangulo()
 	return angulo;
 }
 
-bool Cuadrado::GetTiled()
-{
-	return Tiled;
-}
-
 void Cuadrado::SetVo(double Vo)
 {
 	this->Vo = Vo;
@@ -25,11 +20,6 @@ void Cuadrado::SetVo(double Vo)
 void Cuadrado::Setangulo(double angulo)
 {
 	this->angulo = angulo;
-}
-
-void Cuadrado::SetTiled(bool Tile)
-{
-	this->Tiled = Tile;
 }
 
 void Cuadrado::Mover()
@@ -200,7 +190,7 @@ void Cuadrado::CheckColision(Figura * a, double *T)
 		switch (a->GetTag())
 		{
 		case 1:
-  			Gravity();
+			Vivo = false;
 			break;
 		case 2: Gravity(); break;
 		case 3: Gravity(); break;

@@ -25,4 +25,11 @@ public:
 	virtual void Mover();
 	Figura();
 	~Figura();
+
+	struct FigurasCompare {
+
+		bool operator() (const Figura*a, const Figura*b) {
+			return a->x < b->x;
+		}
+	};
 };
