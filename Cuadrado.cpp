@@ -48,12 +48,12 @@ void Cuadrado::Mover()
 			if (y <= Lim)
 			{
 				EnAire = true;
-				y += g*1.3;
+				y += 10;
 				Rotation += 10;
 				if (Rotation > 360)
 					Rotation = 0;
 			}
-			if (y >= Lim)
+			if (y > Lim)
 			{
 				EnAire = false;
 				Rotation = 135;
@@ -61,25 +61,28 @@ void Cuadrado::Mover()
 
 		}
 
-		else if (GravMod == -1)
+		else
 		{
-			if (y >= Lim)
+			if (GravMod == -1)
 			{
-				EnAire = true;
-				y -= g*1.3;
-				Rotation += 10;
-				if (Rotation > 360)
-					Rotation = 0;
-			}
+				if (y >= Lim)
+				{
+					EnAire = true;
+					y -= 10;
+					Rotation += 10;
+					if (Rotation > 360)
+						Rotation = 0;
+				}
 
-			if (y <= Lim)
-			{
-				EnAire = false;
-				Rotation = 315;
+				if (y < Lim)
+				{
+					EnAire = false;
+					Rotation = 315;
+				}
 			}
 		}
 	}
-}
+} 
 
 void Cuadrado::Transformar()
 {
@@ -92,25 +95,38 @@ bool Cuadrado::Colision(Figura * a)
 	{
 		if (a->GetTag() == 4)
 		{
-			if (a->Getx() <= (x + l) && (a->Getx() + a->Getl()) >= x)
-			
+			if (((a->Getx() <= (x + l)) || ((x + l) >= (a->Getx() + a->Getl()))) && ((a->Getx() + a->Getl()) >= (x - l)))//mientras haya (pseudo)colision horizontal
+																														 //if (a->Getx() <= (x + l) && (a->Getx() + a->Getl()) >= x)
 			{
-
 				if (y + l >= a->Gety() && y <= a->Gety() + a->Getl())
 				{
+					a->Colide(true);
 
-					if (y < a->Gety())
+					if (GravMod == 1)
 					{
-						a->Colide(true);
-						Lim = a->Gety();
-						return true;
-					}
-					else
-					{
-						a->Colide(true);
-						a->SetTag(1);
-					}
+						if (y <= a->Gety())
+						{
 
+							Lim = a->Gety();
+							return true;
+						}
+						if (y >= a->Gety())
+						{
+							a->SetTag(1);
+						}
+					}
+					if (GravMod == -1)
+					{
+						if (y + l >= a->Gety() + a->Getl())
+						{
+							Lim = (a->Gety() + a->Getl());
+							return true;
+						}
+						if(y + l <= a->Gety() + a->Getl())
+						{
+							a->SetTag(1);
+						}
+					}
 				}
 				else
 				{
@@ -120,7 +136,7 @@ bool Cuadrado::Colision(Figura * a)
 			}
 			else
 			{
-				//Tiled = false;
+
 				return false;
 			}
 		}
@@ -151,7 +167,7 @@ void Cuadrado::Salto(double tiempo)
 		{
 			if (x < 100)
 				x = (Vo*cos(angulo)*tiempo);
-			y = dy - GravMod*(1.7*Vo*sin(angulo)*tiempo - 0.5 * g * tiempo * tiempo);
+			y = dy - GravMod*(1.7*Vo*sin(angulo)*tiempo - 0.5 * 10 * tiempo * tiempo);
 			Rotation += 10;
 			if (Rotation > 360)
 				Rotation = 0;
@@ -166,7 +182,7 @@ void Cuadrado::Impulso(double tiempo)
 	{
 		if (x < 100)
 			x = (1.5*Vo*cos(angulo)*tiempo);
-		y = dy - GravMod*(2 * Vo*sin(angulo)*tiempo - 0.5 * g * tiempo * tiempo);
+		y = dy - GravMod*(2 * Vo*sin(angulo)*tiempo - 0.5 * 10 * tiempo * tiempo);
 		Rotation += 10;
 		if (Rotation > 360)
 			Rotation = 0;
@@ -180,27 +196,25 @@ void Cuadrado::CheckColision(Figura * a, double *T)
 	if (Colision(a))
 	{
 		if (!Tiled)
-	{
-		*T = 0;
-		OnColision = true;
-		Saltando = false;
-		Impulsando = false;
-	}
+		{
+			*T = 0;
+			OnColision = true;
+			Saltando = false;
+			Impulsando = false;
+		}
 		dy = y;
 		switch (a->GetTag())
 		{
-		case 1:
-			Vivo = false;
-			break;
+		case 1: Vivo = false; break;
 		case 2: Gravity(); break;
 		case 3: Gravity(); break;
-		case 4: Tiled = true;
-			OnColision = false; 
-			EnAire = false;
-			break;
-		case 5: EnPortal = true; Transformar(); break;
-		case 6: EnPortal = true; Transformar(); break;
-		case 7: SetImpulsando(true); break;		
+		case 4: { Tiled = true;
+			OnColision = false;
+			EnAire = false; }
+				break;
+		case 5: {EnPortal = true; Transformar(); } break;
+		case 6: {EnPortal = true; Transformar(); } break;
+		case 7: { SetImpulsando(true); } break;
 		default: break;
 		}
 	}
@@ -209,7 +223,7 @@ void Cuadrado::CheckColision(Figura * a, double *T)
 		Lim = 300 + (GravMod * 200);
 		OnColision = false;
 	}
-		
+
 }
 
 void Cuadrado::Mostrar(Graphics ^ G, Bitmap ^ img)
@@ -248,9 +262,9 @@ Cuadrado::Cuadrado(float px, float py, float pl)
 	dy = y = py;
 	l = pl;
 	Vo = 35;
-	angulo = 45;
+	angulo = 45;  
 	Lim = 300 + (GravMod * 200);
-	t = 2 * (Vo*sin(angulo) / g);
+	t = 2 * (Vo*sin(angulo) / 10);
 
 }
 

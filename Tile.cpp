@@ -4,7 +4,7 @@
 
 void Tile::Mostrar(Graphics ^ G, Bitmap ^ img)
 {
-	G->DrawImage(img, x, y, l - 5, l - 5);
+	G->DrawImage(img, x, y, (l - 5), (l - 5));
 }
 
 Tile::Tile()

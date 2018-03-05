@@ -71,7 +71,7 @@ void GameManager::CalcularProgreso()
 {
 	int Por = ((Fin - Vec[Vec.size()-1]->Getx())/Fin)*100;
 	Progreso = Por;
-	if (Progreso > 99)
+	if (Progreso > 95)
 		Complete = true;
 }
 
@@ -80,22 +80,35 @@ void GameManager::ShowRanking(Graphics ^ gr)
 	System::Drawing::Font ^f = gcnew System::Drawing::Font("Comic Sans MS", 14, System::Drawing::FontStyle::Bold);
 	System::Drawing::Font ^fstar = gcnew System::Drawing::Font("Wingdings", 14, System::Drawing::FontStyle::Bold);
 
-	System::Drawing::SolidBrush ^b = gcnew  System::Drawing::SolidBrush(System::Drawing::Color::YellowGreen);
+	System::Drawing::SolidBrush ^b = gcnew  System::Drawing::SolidBrush(System::Drawing::Color::GreenYellow);
 	int item = 0;
+	gr->DrawString(gcnew System::String("Nombre"), f, b, 100, 50);
+	gr->DrawString(gcnew System::String("Porcentaje"), f, b, 400, 50);
+	gr->DrawString(gcnew System::String("Intentos"), f, b, 700, 50);
+	gr->DrawString(gcnew System::String("Saltos"), f, b, 1000, 50);
+
 	for (vector<Participante*>::iterator it = Participantes.begin(); it != Participantes.end(); it++) 
 	{
-		gr->DrawString(gcnew System::String(&*(*it)->GetNombre().begin()), f, b, 100 , 80 + (30 * item));
-		gr->DrawString(gcnew System::String((*it)->GetPorcentaje().ToString()), f, b, 400, 80 + (30 * item));
-		gr->DrawString(gcnew System::String((*it)->GetIntentos().ToString()), f, b, 700, 80 + (30 * item));
-		gr->DrawString(gcnew System::String((*it)->GetSaltos().ToString()), f, b, 1000, 80 + (30 * item));
+		gr->DrawString(gcnew System::String(&*(*it)->GetNombre().begin()), f, b, 100 , 90 + (30 * item));
+		gr->DrawString(gcnew System::String((*it)->GetPorcentaje().ToString()), f, b, 400, 90 + (30 * item));
+		gr->DrawString(gcnew System::String((*it)->GetIntentos().ToString()), f, b, 700, 90 + (30 * item));
+		gr->DrawString(gcnew System::String((*it)->GetSaltos().ToString()), f, b, 1000, 90 + (30 * item));
 		item++;
 	}
 }
-
 GameManager::GameManager()
 {
-	file_nameH = "Highscores.txt";
-	file_name = "Editor.txt";
+	if (Complete)
+	{
+
+		file_name = "Editor2.txt";
+		file_nameH = "HighscoresH.txt";
+	}
+	else
+	{
+		file_name = "Editor.txt";
+		file_nameH = "Highscores.txt";
+	}
 	N_Intentos = 0;
 	N_Saltos = 0;
 	Complete = false;
@@ -103,14 +116,44 @@ GameManager::GameManager()
 	Inicializar();
 }
 
-GameManager::GameManager(int pProgreso, int pIntentos, int pSaltos)
+GameManager::GameManager(bool Nivel)
 {
-	file_nameH = "Highscores.txt";
-	file_name = "Editor.txt";
+	Complete = Nivel;
+	if (Complete)
+	{
+
+		file_name = "Editor2.txt";
+		file_nameH = "HighscoresH.txt";
+	}
+	else
+	{
+		file_name = "Editor.txt";
+		file_nameH = "Highscores.txt";
+	}
+	N_Intentos = 0;
+	N_Saltos = 0;
+	N_Saltos = 0;
+	Inicializar();
+}
+
+GameManager::GameManager(int pProgreso, int pIntentos, int pSaltos, bool Nivel)
+{
+	Complete = Nivel;
+		if (Complete)
+		{
+
+			file_name = "Editor2.txt";
+			file_nameH = "HighscoresH.txt";
+		}
+		else
+		{
+			file_name = "Editor.txt";
+			file_nameH = "Highscores.txt";
+		}
+	
 	N_Intentos = pIntentos;
 	N_Saltos = pSaltos;
 	Progreso = pProgreso;
-	Complete = false;
 	Inicializar();
 }
 
@@ -194,6 +237,11 @@ double GameManager::GetTemp()
 	return TiempoReal;
 }
 
+bool GameManager::GetComplete()
+{
+	return Complete;
+}
+
 int GameManager::GetN_Saltos()
 {
 	return N_Saltos;
@@ -218,6 +266,11 @@ void GameManager::Temp(double t)
 void GameManager::SetTemp(double t)
 {
 	TiempoReal = t;
+}
+
+vector<Participante*> GameManager::GetParticipantes()
+{
+	return Participantes;
 }
 
 void GameManager::SetIntentos(int In)
@@ -265,6 +318,8 @@ void GameManager::RegistrarPuntuacion(string Nombre)
 	Actual->SetNombre(Nombre);
 	Participantes.push_back(Actual);
 	sort(Participantes.begin(), Participantes.end(), Participante::ParticipantesCompare());
+	if (Participantes.size() > 10)
+		Participantes.pop_back();
 	ofstream fs(file_nameH); // VARIABLE QUE ENLAZA EL ARCHIVO DE TEXTO CON EL PROGRAMA
 	fs.clear();
 	for (vector<Participante*>::iterator it = Participantes.begin(); it != Participantes.end(); it++)

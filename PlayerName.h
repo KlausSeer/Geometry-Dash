@@ -21,6 +21,7 @@ namespace GeomtryDash {
 			//
 			//TODO: agregar código de constructor aquí
 			//
+			Nombre = gcnew String("");
 		}
 
 	protected:
@@ -37,14 +38,20 @@ namespace GeomtryDash {
 	private: System::Windows::Forms::Button^  button1;
 	private: System::Windows::Forms::TextBox^  textBox1;
 	private: System::Windows::Forms::Label^  label1;
+	private: System::ComponentModel::IContainer^  components;
 	protected:
 
 	private:
 		/// <summary>
 		/// Variable del diseñador necesaria.
 		/// </summary>
-		System::ComponentModel::Container ^components;
-
+		bool Activado = true;
+		bool MostrandoFrm = false;
+		int Per;
+		bool Nivel;
+		PlayerSelect^ PS;
+	private: System::Windows::Forms::Timer^  DeltaTime;
+			 String^ Nombre;
 #pragma region Windows Form Designer generated code
 		/// <summary>
 		/// Método necesario para admitir el Diseñador. No se puede modificar
@@ -52,10 +59,12 @@ namespace GeomtryDash {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			this->components = (gcnew System::ComponentModel::Container());
 			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(PlayerName::typeid));
 			this->button1 = (gcnew System::Windows::Forms::Button());
 			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
 			this->label1 = (gcnew System::Windows::Forms::Label());
+			this->DeltaTime = (gcnew System::Windows::Forms::Timer(this->components));
 			this->SuspendLayout();
 			// 
 			// button1
@@ -89,6 +98,11 @@ namespace GeomtryDash {
 			this->label1->TabIndex = 2;
 			this->label1->Text = L"Ingrese su Nombre:";
 			// 
+			// DeltaTime
+			// 
+			this->DeltaTime->Interval = 1000;
+			this->DeltaTime->Tick += gcnew System::EventHandler(this, &PlayerName::DeltaTime_Tick);
+			// 
 			// PlayerName
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -100,20 +114,74 @@ namespace GeomtryDash {
 			this->Controls->Add(this->button1);
 			this->Name = L"PlayerName";
 			this->Text = L"PlayerName";
+			this->Deactivate += gcnew System::EventHandler(this, &PlayerName::PlayerName_Deactivate);
+			this->Enter += gcnew System::EventHandler(this, &PlayerName::PlayerName_Enter);
+			this->Leave += gcnew System::EventHandler(this, &PlayerName::PlayerName_Leave);
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
 		}
 #pragma endregion
+		public:bool GetNivel()
+		{
+			return Nivel;
+		}
+		public:bool GetActivado()
+		{
+			return Activado;
+		}
+		
+	   public:bool GetMostrando()
+		{
+			return MostrandoFrm;
+		}
+	public:String^ GetNombre()
+	{
+		return Nombre;
+	}
+	public: int GetPersonaje()
+	{
+		return Per;
+	}
 	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
-		String^ Nombre = gcnew String("");
+
 		Nombre = textBox1->Text;
-		PlayerSelect^ PS = gcnew PlayerSelect(Nombre);
+		PS = gcnew PlayerSelect(Nombre);
 		this->Hide();
-		PS->ShowDialog();
-		this->Show();
+		MostrandoFrm = true;
+		PS->Show();
 	}
 	private: System::Void textBox1_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 	}
-	};
+	private: System::Void PlayerName_Leave(System::Object^  sender, System::EventArgs^  e) {
+	}
+private: System::Void PlayerName_Enter(System::Object^  sender, System::EventArgs^  e) {
+}
+private: System::Void PlayerName_Deactivate(System::Object^  sender, System::EventArgs^  e) {
+	if(!PS->GetInGame())
+	{
+		if (PS->GetActivado())
+	{
+		if (PS->Enabled)
+			this->DeltaTime->Start();
+	}
+	}
+}
+private: System::Void DeltaTime_Tick(System::Object^  sender, System::EventArgs^  e) {
+	if (!PS->GetInGame())
+	{
+		if (!PS->Visible)
+		{
+			this->Show();
+			Per = PS->GetPersonaje();
+			Nivel = PS->GetNivel();
+			PS->Close();
+			MostrandoFrm = false;
+			if (PS->GetMenu())
+				this->Hide();
+			this->DeltaTime->Stop();
+		}
+	}
+}
+};
 }

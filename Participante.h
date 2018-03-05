@@ -30,12 +30,12 @@ public:
 
 		bool operator() (const Participante *a, const Participante *b) {
 
-			if (a->Porcentaje < b->Porcentaje)
+			if (a->Porcentaje > b->Porcentaje)
 				return true;
-			else if (a->Porcentaje > b->Porcentaje)
+			else if (a->Porcentaje < b->Porcentaje)
 				return false;
 
-			if (a->Intentos < b->Intentos)
+			if (a->Intentos > b->Intentos)
 				return true;
 			else if (a->Intentos < b->Intentos)
 				return false;
@@ -44,9 +44,7 @@ public:
 				return true;
 			
 			return false;
-				/*(a->Porcentaje < b->Porcentaje) ||
-				((a->Porcentaje == b->Porcentaje) && (a->Intentos < b->Intentos)) ||
-				((a->Porcentaje == b->Porcentaje) && (a->Intentos == b->Intentos) && (a->Saltos< b->Saltos));*/
+				
 		}
 
 	};

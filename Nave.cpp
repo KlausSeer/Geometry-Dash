@@ -34,7 +34,7 @@ void Nave::Mover()
 	if (!Tiled)
 	{
 		if (!Saltando)
-		y += g*1.5;
+		y += g;
 	}
 }
 

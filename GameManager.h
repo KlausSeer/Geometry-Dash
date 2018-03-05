@@ -30,17 +30,20 @@ class GameManager
 	vector<Participante*> Participantes;
 public:
 	GameManager();
-	GameManager(int pProgreso,int pIntentos, int pSaltos);
+	GameManager(bool Nivel);
+	GameManager(int pProgreso,int pIntentos, int pSaltos, bool Nivel);
 	~GameManager();
 	
 	//Metodos de Acceso
 	Player* GetPlayer();
 	double GetTemp();
+	bool GetComplete();
 	int GetN_Saltos();
 	int GetN_Intentos();
 	int GetN_Progreso();
 	void Temp(double t);
 	void SetTemp(double t);
+	vector<Participante*>GetParticipantes();
 
 	void SetIntentos(int In);
 	void LeerHighscores();
